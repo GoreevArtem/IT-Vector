@@ -1,7 +1,6 @@
 import psycopg2
 from operator import itemgetter
 import jellyfish
-from Summary import Summary
 
 class DataBase:
 
@@ -52,7 +51,6 @@ class DataBase:
         try:
             self.cursor.execute(query, (param))
             result = self.cursor.fetchall()
-            result = list(map(list, result))
             return result
         except psycopg2.Error as e:
             print(f"Ошибка '{e}' при чтении из БД")
@@ -73,14 +71,10 @@ class DataBase:
         # print('Причины:')
         # print(reasons)
         
-        summary_tokenizer = Summary()
         for reason in reasons:
             reason_id = reason[0]
             select_methods = "SELECT * FROM methods WHERE reason_id = %s;"
             method = self.execute_read_query_params(self.connection, select_methods, [reason_id])
-
-            method[0][1] = summary_tokenizer.tokenize_summary(method[0][1])
-
             methods.append(method)
 
             # print('Метод:')
