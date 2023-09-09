@@ -61,13 +61,13 @@ class DataBase:
         results = []
         methods = []
         for malfunction in self.malfunctions:
-            accuracy = jellyfish.damerau_levenshtein_distance(text, malfunction[1])
+            accuracy = jellyfish.jaro_similarity(text, malfunction[1])
             results.append({'id': malfunction[0], 'malfunction': malfunction[1], 'accuracy': accuracy,
                             'action_id': malfunction[2]})
 
         sort_array = sorted(results, key=itemgetter('accuracy'))
         # print(sort_array[-1])
-        some_id = sort_array[0]['id']
+        some_id = sort_array[-1]['id']
         select_reasons = "SELECT * FROM reasons WHERE malfunction_id = %s;"
         reasons = self.execute_read_query_params(self.connection, select_reasons, [some_id])
         # print('Причины:')
